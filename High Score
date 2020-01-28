@@ -1,0 +1,61 @@
+//g++  5.4.0
+ 
+#include<bits/stdc++.h>
+using namespace std;
+ 
+#define ff first
+#define ss second
+#define int long long
+#define pb push_back
+#define pii pair< int,int >
+#define fast ios::sync_with_stdio(0) , cin.tie(0) , cout.tie(0) ;
+ 
+const int inf = 1e16;
+const int nax = 3e3+10;
+vector<bool> vis(nax,0);
+vector<int> g[nax];
+ 
+void dfs( int v )
+{
+    vis[ v ] = 1;
+    for( auto &i : g[v] )
+        if( !vis[i] )
+            dfs( i );
+    return ;
+}
+signed main()
+{
+    fast;
+    int n , m ;
+    cin >> n >> m;
+    vector< pair<pii,int> > ip(m);
+    for(int i=0 ; i<m ; i++ )
+        cin >> ip[i].ff.ff >> ip[i].ff.ss >> ip[i].ss, g[ip[i].ff.ff].pb( ip[i].ff.ss);
+ 
+    vector<int> dist(n+1,-inf);
+    dist[1] = 0;
+ 
+    for(int i = 0 ; i<n-1 ; i++ )
+    {
+        for(int j=0 ; j<m ; j++ )
+        {
+            if( dist[ ip[j].ff.ff ] != -inf )
+            {
+                if( dist[ ip[j].ff.ss ] < dist[ ip[j].ff.ff ] + ip[j].ss )
+                {
+ 
+                    dist[ ip[j].ff.ss ] = dist[ ip[j].ff.ff ] + ip[j].ss ;
+                }
+            }
+        }
+    }
+    for(int i=0 ; i<m ; i++ )
+    {
+        if( dist[ip[i].ff.ff] != -inf && dist[ ip[i].ff.ss] < dist[ip[i].ff.ff] + ip[i].ss )
+            dfs( ip[i].ff.ff );
+    }
+    if( !vis[n] )
+        cout << dist[n];
+    else
+        cout << "-1\n";
+}
