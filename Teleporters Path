@@ -1,0 +1,67 @@
+//g++  5.4.0
+//Topic : Eular-tour
+ 
+#include<bits/stdc++.h>
+using namespace std;
+ 
+#define ff first
+#define ss second
+#define int long long
+#define pb push_back
+#define pii pair< int,int >
+#define fast ios::sync_with_stdio(0) , cin.tie(0) , cout.tie(0) ;
+ 
+const int nax = 1e5+10;
+vector<int> g[nax];
+stack<int> s;
+vector<int> indeg(nax,0) , outdeg(nax,0),vis(nax,0) , eular;
+ 
+void dfs(int v)
+{
+    vis[v] = 1;
+    for(auto &i : g[v] )
+        if( !vis[i] )
+            dfs(i);
+    return ;
+}
+void eular_dfs(int v)
+{
+    s.push(v);
+    while( g[v].size() )
+    {
+        int xx = g[v].back();
+        g[v].pop_back();
+        eular_dfs(xx);
+    }
+    eular.pb(s.top());
+    s.pop();
+    return;
+}
+signed main()
+{
+    fast;
+    int n , m;
+    cin >> n >> m;
+    for(int i=1 ; i<=m ; i++ )
+    {
+        int u ,v;
+        cin >> u >> v;
+        g[u].pb(v);
+        indeg[v]++;
+        outdeg[u]++;
+    }
+    dfs(1);//condition-1 : all nodes are connected
+    bool f = 0;
+    for(int i=1 ; i<=n ; i++ )
+    {
+        if( !vis[i] && g[i].size() ) 
+            f = 1;
+        if( i!=1 && i!=n && indeg[i] != outdeg[i] )
+            f = 1;
+    }
+    if( f ) return cout << "IMPOSSIBLE\n",0;
+    eular_dfs(1);
+    if( eular[0] != n ) return cout << "IMPOSSIBLE\n",0;
+    for(int i=(int)(eular.size())-1 ; i>=0 ; i-- )
+        cout << eular[i] << " ";
+}
