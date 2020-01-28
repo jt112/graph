@@ -1,0 +1,59 @@
+//g++  5.4.0
+//topic : strongly connected component(scc)
+#include<bits/stdc++.h>
+using namespace std;
+ 
+#define pb push_back
+#define fast ios::sync_with_stdio(0) , cin.tie(0) , cout.tie(0) ;
+ 
+const int nax = 1e5+10;
+vector<int> g[nax] , rg[nax] , vis1(nax,0) , vis2(nax,0);
+int ans[nax] , grp_no = 0 , n , m;
+stack<int> s;
+ 
+void dfs_fwd(int v)
+{
+    vis1[v] = 1;
+    for(auto &i : g[v] )
+        if( !vis1[i] )
+            dfs_fwd(i);
+    s.push(v);    
+    return ;
+}
+void dfs_rev(int v)
+{
+    vis2[v] = 1;
+    ans[v] = grp_no;
+    for(auto &i : rg[v] )
+        if( !vis2[i] )
+            dfs_rev(i);
+    return ;
+}
+void scc()
+{
+    for(int i=1 ; i<=n ; i++ )
+        if( !vis1[i] ) dfs_fwd(i);
+    while( !s.empty() )
+    {
+        if( !vis2[s.top()] )
+            grp_no++, dfs_rev(s.top());
+        s.pop();
+    }
+    return ;
+}
+signed main()
+{
+    fast;
+    cin >> n >> m;
+    for(int i=1 ; i<=m ; i++ )
+    {
+        int u ,v;
+        cin >> u >> v;
+        g[u].pb(v);
+        rg[v].pb(u);
+    }
+    scc();
+    cout << grp_no << "\n";
+    for(int i=1 ; i<=n ; i++ ) cout << ans[i] << " " ;
+     
+}
