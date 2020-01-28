@@ -1,0 +1,67 @@
+//g++  5.4.0
+ 
+#include<bits/stdc++.h>
+using namespace std;
+ 
+#define pb push_back
+#define fast ios::sync_with_stdio(0) , cin.tie(0) , cout.tie(0) ;
+ 
+const int nax = 1e5+10;
+vector<int> g[nax] , rg[nax] ,vis1(nax,0) , vis2(nax,0);
+ 
+void dfs1(int v)
+{
+    vis1[v] = 1;
+    for( auto &i : g[v] )
+        if(!vis1[i])
+            dfs1(i);
+    return ;
+}
+ 
+void dfs2(int v)
+{
+    vis2[v] = 1;
+    for( auto &i : rg[v] )
+        if(!vis2[i])
+            dfs2(i);
+    return ;
+}
+signed main()
+{
+    fast;
+    int n , m;
+    cin >> n >> m;
+    for(int i=1 ; i<=m ; i++ )
+    {
+        int u,v;
+        cin >> u>> v;
+        g[u].pb(v);
+        rg[v].pb(u);
+    }
+    dfs1(1);
+    dfs2(1);
+    bool f = 0;
+    for(int i=1 ; i<=n ; i++ ) if( !vis1[i] || !vis2[i] ) f=1;
+    if( !f ) cout << "YES\n";
+    else
+    {
+        cout << "NO\n";
+        for(int i=1 ; i<=n ; i++ )
+        {
+            if( !vis1[i] )
+            {
+                cout << "1 "<<i<<"\n";
+                return 0;
+            }
+        }
+        
+        for(int i=1 ; i<=n ; i++ )
+        {
+            if( !vis2[i] )
+            {
+                cout << i << " 1\n";
+                return 0;
+            }
+        }
+    }
+}
