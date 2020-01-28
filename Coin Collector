@@ -1,0 +1,97 @@
+//g++  5.4.0
+//topic : strongly connected component(scc)
+#include<bits/stdc++.h>
+using namespace std;
+ 
+#define int long long
+#define pb push_back
+#define fast ios::sync_with_stdio(0) , cin.tie(0) , cout.tie(0) ;
+ 
+const int nax = 1e5+10;
+vector<int> g[nax] , rg[nax] , vis1(nax,0) , vis2(nax,0) , val(nax) , scc_tree[nax] , dp(nax,0) , vis3(nax,0) , gr(nax) ;
+int grp_no = 0 , n , m , sum = 0 ;
+stack<int> s ;
+ 
+void dfs_fwd(int v)
+{
+    vis1[v] = 1;
+    for(auto &i : g[v] )
+        if( !vis1[i] )
+            dfs_fwd(i);
+    s.push(v);    
+    return ;
+}
+void dfs_rev(int v)
+{
+    vis2[v] = 1;
+    gr[ v ] = grp_no;
+    sum += val[ v ] ;
+    for(auto &i : rg[v] )
+        if( !vis2[i] )
+            dfs_rev(i);
+    return ;
+}
+void scc()
+{
+    for(int i=1 ; i<=n ; i++ )
+        if( !vis1[i] ) dfs_fwd(i);
+    while( !s.empty() )
+    {
+        if( !vis2[s.top()] )
+        {
+            sum  = 0; 
+            grp_no++;
+            dfs_rev(s.top());
+            dp[ grp_no ] = sum;
+        }
+        s.pop();
+    }
+    return ;
+}
+void work(int v)
+{
+    vis3[v] = 1;
+    int mx = 0;
+    for(auto &i : scc_tree[v])
+    {
+        if( !vis3[i] )
+            work( i );
+        mx = max( mx , dp[i] );
+    }
+    dp[ v ] += mx;
+    vis3[ v ]  = 2;
+    return ; 
+}
+signed main()
+{
+    fast;
+    cin >> n >> m;
+    for(int i=1 ; i<=n ; i++ ) cin>>val[i];
+    for(int i=1 ; i<=m ; i++ )
+    {
+        int u ,v;
+        cin >> u >> v;
+        g[u].pb(v);
+        rg[v].pb(u);
+    }
+    scc();
+    for(int i=1 ; i<=n ; i++ )
+    {
+        for( auto &j : g[i] )
+        {
+            if( gr[j] != gr[i] )
+                scc_tree[ gr[i] ].pb( gr[j] );
+        }
+    }
+    // here we use cycle detection algo so we can't go through further where we already visited although this is acyclic directed tree 
+    for(int i=1 ; i<=grp_no ; i++ )
+    {
+        if( !vis3[i] )
+            work( i );
+    }
+    int ans = 0;
+    for(int i=1 ; i <= n;  i++ ) 
+        ans = max( ans , dp[i] );
+    cout << ans << "\n";
+}
+   
