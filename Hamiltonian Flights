@@ -1,0 +1,54 @@
+//g++  5.4.0
+//Topic : Hamiltonia-path
+ 
+#include<bits/stdc++.h>
+using namespace std;
+ 
+#define ff first
+#define ss second
+#define int long long
+#define pb push_back
+#define pii pair< int,int >
+#define fast ios::sync_with_stdio(0) , cin.tie(0) , cout.tie(0) ;
+ 
+const int nax = (1<<20);
+const int mod = 1e9+7;
+int dp[nax][20];
+vector<int> g[20];
+ 
+signed main()
+{
+    fast;
+    int n,m;
+    cin >> n >> m;
+    dp[1][0] = 1;
+    for(int i=1 ; i<=m ; i++ )
+    {
+        int u,v;
+        cin >> u >> v;
+        u--;
+        v--;
+        g[u].pb( v );
+    }
+    for(int i=3 ; i<(1<<n) ; i+=2 )
+    {
+        vector<int> active_bits;
+        for(int j=0; j<n;j++ )
+        {
+            if( ((1<<j)&i) ) 
+                active_bits.pb( j );
+        }
+        if( (int)(active_bits.size() ) > 1 )
+        {
+            for( auto &j : active_bits )
+            {
+                for( auto &k : g[j] )
+                {
+                    dp[i][k] += dp[i^(1<<k)][j];
+                    dp[i][k] %= mod;
+                }
+            }
+        }
+    }
+    cout << dp[(1<<n)-1][n-1] << "\n";
+}
