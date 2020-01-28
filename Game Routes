@@ -1,0 +1,53 @@
+//g++  5.4.0
+ 
+#include<bits/stdc++.h>
+using namespace std;
+ 
+#define int long long
+#define pb push_back
+#define pii pair<int,int>
+#define ff first
+#define ss second
+#define fast ios::sync_with_stdio(0) , cin.tie(0) , cout.tie(0) ;
+ 
+const int nax= 1e5+10;
+const int mod = 1e9+7;
+vector<int> g[nax] , vis(nax,0) , s , dp(nax,0);
+int n,m;
+ 
+void topologicalsort(int v)
+{
+    if( v==n ) return;
+    vis[v] = 1;
+    for(auto &i : g[v])
+    {
+        if( !vis[i] )
+            topologicalsort( i );
+    }
+    s.pb(v);
+    return ; 
+}
+int main()
+{
+    fast;
+    cin >>n >> m;
+    for(int i=0;i<m;i++)
+    {
+        int u,v;
+        cin>>u>>v;
+        g[u].push_back(v);
+    }
+    for(int i=1;i<=n;i++)
+    {
+        if(!vis[i])
+            topologicalsort(i);
+    }
+    dp[n] = 1;
+    for( auto &i : s )
+    {
+        for( auto &j : g[i] )
+            dp[ i ] = (dp[ i ] + dp[ j ] ) %mod;
+    }
+    cout << dp[1];
+}
+Test de
